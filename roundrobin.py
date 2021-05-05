@@ -27,7 +27,7 @@ class RoundRobinScheduler():
     def update_ready(self, criteria):
         if self.blocked.is_empty():
             return
-        while(self.blocked.peek_priority() == criteria):
+        while(self.blocked.peek_priority() < criteria):
             process = self.blocked.pop()
             process.blocked_time = 0
             self.add_to_ready(process)
@@ -35,6 +35,7 @@ class RoundRobinScheduler():
                 return
     def block(self, timer, amount, pc, acc):
         self.cur_process.blocked_time = timer + amount
+        self.cur_process.blocked += amount
         self.pc = pc
         self.acc = acc
         self.add_to_blocked(self.cur_process)
@@ -56,8 +57,8 @@ class RoundRobinScheduler():
     def is_done(self, pc, timer, done):
         if self.cur_process is not None:
             if self.cur_process.size <= pc:
-                self.cur_process.downtime = timer - self.cur_process.arrival - self.cur_process.uptime
-                self.cur_process.turnaround = self.cur_process.downtime + self.cur_process.uptime
+                self.cur_process.turnaround = timer - self.cur_process.arrival
+                self.cur_process.waiting = self.cur_process.turnaround - self.cur_process.uptime - self.cur_process.blocked
                 done.append(self.cur_process)
                 self.cur_process = None
     def is_empty(self):

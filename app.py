@@ -152,27 +152,27 @@ def run_os(queue, scheduler):
             acc, pc = scheduler.run(acc, pc)
         except syscall.SyscallHalt:
             process = scheduler.cur_process
-            process.downtime = (timer+1) - process.uptime - process.arrival
-            process.turnaround = process.uptime + process.downtime
+            process.turnaround = timer + 1 - process.arrival
+            process.waiting = process.turnaround - process.uptime - process.blocked
             done.append(process)
             scheduler.cur_process = None
         except syscall.SyscallWrite:
             delay = random.randint(10, 40)
-            print(acc)
-            scheduler.cur_process.pc = pc+1
-            scheduler.block(timer, delay, pc, acc)
+            print(f'OUTPUT: {acc}')
+            #scheduler.cur_process.pc = pc+1
+            scheduler.block(timer, delay, pc+1, acc)
         except syscall.SyscallRead:
             delay = random.randint(10,40)
-            scheduler.cur_process.acc = int(input("> "))
-            scheduler.cur_process.pc = pc+1
-            scheduler.block(timer, delay, pc, acc)
+            acc = int(input("> "))
+            #scheduler.cur_process.pc = pc+1
+            scheduler.block(timer, delay, pc+1, acc)
         scheduler.is_done(pc, timer, done)
         scheduler.interrupt(timer, pc, acc)
         timer += 1
         scheduler.update_ready(timer)
     print("\n-----\n")
     for process in done:
-        print(f'{process.name}\nuptime: {process.uptime} time units\ndowntime: {process.downtime} time units \nturnarround:{process.turnaround}\n-----\n')
+        print(f'{process.name}\nuptime: {process.uptime} time units\nwaiting: {process.waiting} time units \nturnarround:{process.turnaround}\nBlocked: {process.blocked}\n-----\n')
 
 
 def main():

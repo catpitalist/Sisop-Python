@@ -17,6 +17,8 @@ class Process():
         self.blocked_time = 0
         self.priority = priority
         self.name = name + f' <{self.priority}>'
+        self.waiting = 0
+        self.blocked = 0
     def run(self, acc, pc):
         return self.code[pc].run(self.data, acc, pc)
     def __repr__(self):
