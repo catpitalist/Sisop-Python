@@ -21,7 +21,6 @@ def main_menu():
             print("Not a valid option!")
         if selection == 1:
             try:
-                menu_load()
                 queue.push(menu_load())
             except:
                 print("Couldn't read the file!")
@@ -127,6 +126,16 @@ def run_os(queue, scheduler):
             scheduler.add_to_ready(queue.pop())
         scheduler.interrupt(timer, pc, acc)
         acc, pc = scheduler.load_if_none(acc, pc)
+        if scheduler.cur_process == None:
+            print(f'Current Process: NONE')
+        else:
+            print(f'Current Process {scheduler.cur_process.name}')
+        print(f'Ready:')
+        for item in scheduler.ready.queue:
+            print(item.name)
+        print(f'Blocked:')
+        for process in scheduler.blocked._data:
+            print(process[2].name)
         try:
             acc, pc = scheduler.run(acc, pc)
         except syscall.SyscallHalt:
