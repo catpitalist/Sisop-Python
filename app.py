@@ -13,7 +13,8 @@ def main_menu():
         print("|1) Load File")
         print("|2) Select Scheduler")
         print("|3) Run")
-        print("|4 Quit")
+        print("|4) Quit")
+        selection = -1
         try:
             selection = int(input("> "))
             if selection < 0 or selection > 4:
@@ -88,7 +89,7 @@ def menu_scheduler():
             print("| Neat! What is the quantum? (positive integer!)")
             try:
                 quantum = int(input(" > "))
-                if quantum < 0:
+                if quantum <= 0:
                     raise RuntimeError()
             except:
                 print(" | Hey, that wasn't a valid quantum!")

@@ -36,8 +36,8 @@ class RoundRobinScheduler():
     def block(self, timer, amount, pc, acc):
         self.cur_process.blocked_time = timer + amount
         self.cur_process.blocked += amount
-        self.pc = pc
-        self.acc = acc
+        self.cur_process.pc = pc
+        self.cur_process.acc = acc
         self.add_to_blocked(self.cur_process)
         self.cur_process = None
     def load_if_none(self, acc, pc):
@@ -81,7 +81,7 @@ class RoundRobinScheduler():
         flag = False
         for ready in self.ready.queue:
             flag = True
-            s = s + ready + ", "
+            s = s + ready.name + ", "
         if flag:
             s = s[:-2]+ " "
         s = s + "]"
