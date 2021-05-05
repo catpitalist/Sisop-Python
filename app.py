@@ -30,6 +30,7 @@ def main_menu():
             scheduler = menu_scheduler()
         elif selection == 3:
             menu_run(queue, scheduler)
+            scheduler = None
         elif selection == 4:
             print("| Goodbye!")
             exit()
@@ -72,6 +73,7 @@ def menu_load(id):
             print(" | I'm taking you back.")
             print("/")
             return
+
 
 def menu_scheduler():
     print("\\")
@@ -122,25 +124,30 @@ def run_os(queue, scheduler):
     timer = 0
     acc = 0
     pc = 0
-    print(f'TIMER: {timer}')
     while not (queue.is_empty() and scheduler.is_empty() and scheduler.cur_process == None):
         while(not queue.is_empty() and queue.peek_priority() == timer):
             scheduler.add_to_ready(queue.pop())
         scheduler.interrupt(timer, pc, acc)
         acc, pc = scheduler.load_if_none(acc, pc)
+        print(f'Time: {timer}')
         if scheduler.cur_process == None:
             print(f'Current Process:\nNONE\n')
         else:
             print(f'Current Process:\n{scheduler.cur_process.name}\n')
         print(f'Ready:')
-        for item in scheduler.ready.queue:
-            print(item.name)
+        print(scheduler.str_ready())
         print(f'\nBlocked:')
-        for process in scheduler.blocked._data:
-            print(process[2].name)
+        print(scheduler.str_blocked())
         print(f'\nDone:')
+        s = "[ "
+        flag = False
         for process in done:
-            print(process.name)
+            flag = True
+            s = s + process.name + ", "
+        if flag:
+            s = s[:-2]+ " "
+        s = s + "]"
+        print(s)
         try:
             acc, pc = scheduler.run(acc, pc)
         except syscall.SyscallHalt:
@@ -161,8 +168,8 @@ def run_os(queue, scheduler):
             scheduler.block(timer, delay, pc, acc)
         scheduler.is_done(pc, timer, done)
         scheduler.interrupt(timer, pc, acc)
-        scheduler.update_ready(timer)
         timer += 1
+        scheduler.update_ready(timer)
     print("\n-----\n")
     for process in done:
         print(f'{process.name}\nuptime: {process.uptime} time units\ndowntime: {process.downtime} time units \nturnarround:{process.turnaround}\n-----\n')

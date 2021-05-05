@@ -62,3 +62,26 @@ class RoundRobinScheduler():
                 self.cur_process = None
     def is_empty(self):
         return self.ready.empty() and self.blocked.is_empty()
+    
+    def str_blocked(self):
+        s = "[ "
+        flag = False
+        for blocked in self.blocked.queue:
+            flag = True
+            s = s + blocked[2].name + ", "
+        s = s[:-2] + " ]"
+        if flag:
+            s = s[:-2]+ " "
+        s = s + "]"
+        return s
+    
+    def str_ready(self):
+        s = "[ "
+        flag = False
+        for ready in self.ready.queue:
+            flag = True
+            s = s + ready + ", "
+        if flag:
+            s = s[:-2]+ " "
+        s = s + "]"
+        return s

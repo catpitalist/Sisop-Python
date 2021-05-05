@@ -5,20 +5,20 @@ class PriorityQueue():
         self.key = key
         self.index = 0
         if first:
-            self._data = [(key(item), i, item) for i, item in enumerate(first)]
-            self.index = len(self._data)
-            heapq.heapify(self._data)
+            self.queue = [(key(item), i, item) for i, item in enumerate(first)]
+            self.index = len(self.queue)
+            heapq.heapify(self.queue)
         else:
-            self._data = []
+            self.queue = []
     def push(self, item):
-        heapq.heappush(self._data, (self.key(item), self.index, item))
+        heapq.heappush(self.queue, (self.key(item), self.index, item))
         self.index += 1
     def pop(self):
-        p = heapq.heappop(self._data)
+        p = heapq.heappop(self.queue)
         return p[2]
     def is_empty(self):
-        if not self._data:
+        if not self.queue:
             return True
         return False
     def peek_priority(self):
-        return self._data[0][0]
+        return self.queue[0][0]

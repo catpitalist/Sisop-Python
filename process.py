@@ -16,7 +16,7 @@ class Process():
         self.arrival = arrival
         self.blocked_time = 0
         self.priority = priority
-        self.name = name
+        self.name = name + f' <{self.priority}>'
     def run(self, acc, pc):
         return self.code[pc].run(self.data, acc, pc)
     def __repr__(self):
