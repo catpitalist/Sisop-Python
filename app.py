@@ -129,16 +129,16 @@ def run_os(queue, scheduler):
         scheduler.interrupt(timer, pc, acc)
         acc, pc = scheduler.load_if_none(acc, pc)
         if scheduler.cur_process == None:
-            print(f'Current Process:\nNONE')
+            print(f'Current Process:\nNONE\n')
         else:
-            print(f'Current Process:\n{scheduler.cur_process.name}')
+            print(f'Current Process:\n{scheduler.cur_process.name}\n')
         print(f'Ready:')
         for item in scheduler.ready.queue:
             print(item.name)
-        print(f'Blocked:')
+        print(f'\nBlocked:')
         for process in scheduler.blocked._data:
             print(process[2].name)
-        print(f'Done:')
+        print(f'\nDone:')
         for process in done:
             print(process.name)
         try:
