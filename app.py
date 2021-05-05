@@ -8,6 +8,7 @@ import random
 def main_menu():
     scheduler = None
     queue = PriorityQueue(key=lambda x:x.arrival)
+    id = 0
     while True:
         print("|1) Load File")
         print("|2) Select Scheduler")
@@ -21,7 +22,8 @@ def main_menu():
             print("Not a valid option!")
         if selection == 1:
             try:
-                queue.push(menu_load())
+                queue.push(menu_load(id))
+                id += 1
             except:
                 print("Couldn't read the file!")
         elif selection == 2:
@@ -32,7 +34,7 @@ def main_menu():
             print("| Goodbye!")
             exit()
 
-def menu_load():
+def menu_load(id):
     print("\\")
     print(" | Ok! What is the name of the file you want to load?")
     filename = input(" > ")
@@ -57,13 +59,13 @@ def menu_load():
     try:
         code, data = lexer(filename)
         code = parser(code)
-        process = Process(code, data, filename, arrival, priority=priority)
+        process = Process(code, data, filename+" id - "+str(id), arrival, priority=priority)
         return process
     except FileNotFoundError:
         try:
             code, data = lexer(f'{filename}.txt')
             code = parser(code)
-            process = Process(code, data, filename, arrival, priority=priority)
+            process = Process(code, data, filename+" id - "+str(id), arrival, priority=priority)
             return process
         except:
             print(" | Hey, that wasn't a valid file!")
@@ -127,9 +129,9 @@ def run_os(queue, scheduler):
         scheduler.interrupt(timer, pc, acc)
         acc, pc = scheduler.load_if_none(acc, pc)
         if scheduler.cur_process == None:
-            print(f'Current Process: NONE')
+            print(f'Current Process:\nNONE')
         else:
-            print(f'Current Process {scheduler.cur_process.name}')
+            print(f'Current Process:\n{scheduler.cur_process.name}')
         print(f'Ready:')
         for item in scheduler.ready.queue:
             print(item.name)
