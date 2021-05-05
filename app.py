@@ -136,6 +136,9 @@ def run_os(queue, scheduler):
         print(f'Blocked:')
         for process in scheduler.blocked._data:
             print(process[2].name)
+        print(f'Done:')
+        for process in done:
+            print(process.name)
         try:
             acc, pc = scheduler.run(acc, pc)
         except syscall.SyscallHalt:
