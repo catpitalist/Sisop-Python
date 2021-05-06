@@ -52,7 +52,8 @@ def menu_load(id):
     try:
         priority = int(input(" > "))
         if priority < 0 or priority > 3:
-            raise RuntimeError()
+            print("I will assume that this was a low priority task.")
+            priority = 2
     except:
         print(" | Hey, that wasn't a valid priority!")
         print(" | I'm taking you back.")
@@ -61,7 +62,7 @@ def menu_load(id):
     try:
         code, data = lexer(filename)
         code = parser(code)
-        process = Process(code, data, filename+" id - "+str(id), arrival, priority=priority)
+        process = Process(code, data, filename+" ["+str(id)+"]", arrival, priority=priority)
         return process
     except FileNotFoundError:
         try:
@@ -130,54 +131,50 @@ def run_os(queue, scheduler):
             scheduler.add_to_ready(queue.pop())
         scheduler.interrupt(timer, pc, acc)
         acc, pc = scheduler.load_if_none(acc, pc)
-        print(f'Time: {timer}')
+        print("----------------------------------")
+        print(f'|->Time: {timer}')
         if scheduler.cur_process == None:
-            print(f'Current Process:\nNONE\n')
+            print(f'|Current Process:\tNONE\n')
         else:
-            print(f'Current Process:\n{scheduler.cur_process.name}\n')
-        print(f'Ready:')
-        print(scheduler.str_ready())
-        print(f'\nBlocked:')
-        print(scheduler.str_blocked())
-        print(f'\nDone:')
-        s = "[ "
-        flag = False
-        for process in done:
-            flag = True
-            s = s + process.name + ", "
-        if flag:
-            s = s[:-2]+ " "
-        s = s + "]\n"
-        print(s)
+            print(f'|Current Process: {scheduler.cur_process.name}')
+        print(f'|Ready:\t\t{scheduler.str_ready()}')
+        print(f'|Blocked:\t{scheduler.str_blocked()}')
+        print(f'|Done:\t\t{scheduler.str_done()}')
+        print("----------------------------------")
+        print("               -----               ")
+        print("                ---                ")
+        print("               -----               ")
         try:
             acc, pc = scheduler.run(acc, pc)
         except syscall.SyscallHalt:
             process = scheduler.cur_process
             process.turnaround = timer + 1 - process.arrival
             process.waiting = process.turnaround - process.uptime - process.blocked
-            done.append(process)
-            scheduler.cur_process = None
+            scheduler.halt_done(pc, timer+1)
         except syscall.SyscallWrite:
-            delay = random.randint(10, 40)
-            #delay = 10
-            print(f'OUTPUT: {acc}')
+            #delay = random.randint(10, 40)
+            delay = 10
+            print(f'\tOUTPUT: {acc}')
             #scheduler.cur_process.pc = pc+1
             scheduler.block(timer, delay, pc+1, acc)
         except syscall.SyscallRead:
-            delay = random.randint(10,40)
-            #delay = 10
+            #delay = random.randint(10,40)
+            delay = 10
             acc = int(input("> "))
             #scheduler.cur_process.pc = pc+1
             scheduler.block(timer, delay, pc+1, acc)
-        scheduler.is_done(pc, timer, done)
+        scheduler.is_done(pc, timer)
         scheduler.interrupt(timer, pc, acc)
         timer += 1
         scheduler.update_ready(timer)
-    print("\n-----\n")
-    for process in done:
-        print(f'{process.name}\nProcessing Time: {process.uptime} time units\nWaiting: {process.waiting} time units \nTurnarround:{process.turnaround}\nBlocked: {process.blocked}\n-----\n')
-
-
+    for process in scheduler.done:
+        print("------------------------------------")
+        print(f'|{process.name}')
+        print(f'|Processing Time: {process.uptime}')
+        print(f'|Waiting: {process.waiting}')
+        print(f'|Turnarround: {process.turnaround}')
+        print(f'|Blocked: {process.blocked}')
+    print("------------------------------------")
 def main():
     print("-----------------------------------------------------")
     print("                  W E L C O M E                      ")

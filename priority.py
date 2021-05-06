@@ -53,13 +53,31 @@ class PriorityScheduler():
             self.add_to_ready(self.cur_process)
             self.cur_process = None
         
-    def is_done(self, pc, timer, done):
+    def is_done(self, pc, timer):
         if self.cur_process is not None:
             if self.cur_process.size <= pc:
                 self.cur_process.turnaround =  timer - self.cur_process.arrival
                 self.cur_process.waiting = self.cur_process.turnaround - self.cur_process.uptime - self.cur_process.blocked
-                done.append(self.cur_process)
+                self.done.append(self.cur_process)
                 self.cur_process = None
+    def halt_done(self, pc, timer):
+        if self.cur_process is not None:
+            self.cur_process.turnaround = timer - self.cur_process.arrival
+            self.cur_process.waiting = self.cur_process.turnaround - self.cur_process.uptime - self.cur_process.blocked
+            self.done.append(self.cur_process)
+            self.cur_process = None
+    
+    def str_done(self):
+        s = "[ "
+        flag = False
+        for done in self.done:
+            flag = True
+            s = s + done.name + ", "
+        if flag:
+            s = s[:-2]+ " "
+        s = s + "]"
+        return s
+    
     def is_empty(self):
         return self.ready.is_empty() and self.blocked.is_empty()
    
