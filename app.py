@@ -147,7 +147,7 @@ def run_os(queue, scheduler):
             s = s + process.name + ", "
         if flag:
             s = s[:-2]+ " "
-        s = s + "]"
+        s = s + "]\n"
         print(s)
         try:
             acc, pc = scheduler.run(acc, pc)
@@ -159,11 +159,13 @@ def run_os(queue, scheduler):
             scheduler.cur_process = None
         except syscall.SyscallWrite:
             delay = random.randint(10, 40)
+            #delay = 10
             print(f'OUTPUT: {acc}')
             #scheduler.cur_process.pc = pc+1
             scheduler.block(timer, delay, pc+1, acc)
         except syscall.SyscallRead:
             delay = random.randint(10,40)
+            #delay = 10
             acc = int(input("> "))
             #scheduler.cur_process.pc = pc+1
             scheduler.block(timer, delay, pc+1, acc)
@@ -173,7 +175,7 @@ def run_os(queue, scheduler):
         scheduler.update_ready(timer)
     print("\n-----\n")
     for process in done:
-        print(f'{process.name}\nuptime: {process.uptime} time units\nwaiting: {process.waiting} time units \nturnarround:{process.turnaround}\nBlocked: {process.blocked}\n-----\n')
+        print(f'{process.name}\nProcessing Time: {process.uptime} time units\nWaiting: {process.waiting} time units \nTurnarround:{process.turnaround}\nBlocked: {process.blocked}\n-----\n')
 
 
 def main():

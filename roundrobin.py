@@ -70,7 +70,6 @@ class RoundRobinScheduler():
         for blocked in self.blocked.queue:
             flag = True
             s = s + blocked[2].name + ", "
-        s = s[:-2] + " ]"
         if flag:
             s = s[:-2]+ " "
         s = s + "]"
